@@ -1,0 +1,15 @@
+{
+  "name": "hapi-react",
+  "version": "0.0.1",
+  "description": "Simple hapi, react application.",
+  "main": "index.js",
+  "author": "Chris Dyer",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "glue": "^4.1.0",
+    "hapi": "^16.1.0"
+  }
+}
