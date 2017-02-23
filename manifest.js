@@ -15,7 +15,7 @@ const manifest = {
         {
             plugin: 'inert',
             options: {
-                select: 'web'
+                select: ['web']
             }
         }
     ]

@@ -10,6 +10,14 @@ exports.register = function(server, options, next) {
         }
     });
 
+    server.route({
+        method: 'GET',
+        path: '/',
+        handler: (request, reply) => {
+            reply.file(__dirname + '/public/index.html');
+        }
+    });
+
     next();
 };
 
