@@ -9,6 +9,7 @@ Glue.compose(manifest, {
     if (error) {
         throw error;
     }
+
     server.start(() => {
         let ports = server.connections.map(connection => {
             return connection.settings.port;

@@ -4,9 +4,9 @@ exports.register = function(server, options, next) {
 
     server.route({
         method: 'GET',
-        path: '/',
+        path: '/{filename}',
         handler: (request, reply) => {
-            reply('hello world!')
+            reply.file(__dirname + '/public/' + request.params.filename);
         }
     });
 
