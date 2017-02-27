@@ -1,21 +1,18 @@
 'use strict';
+const Hapi = require('hapi'),
+      server = new Hapi.Server();
 
-const Glue = require('glue'),
-    manifest = require('./manifest.js');
+server.connection({ port: 3000, host: 'localhost' });
 
-Glue.compose(manifest, {
-    relativeTo: __dirname
-}, (error, server) => {
-    if (error) {
-        throw error;
-    }
+server.register(require('inert'), error => {
+  if (error) throw error;
+});
 
-    server.start(() => {
-        let ports = server.connections.map(connection => {
-            return connection.settings.port;
-        });
+server.register(require('./scoreboard'), error => {
+  if (error) throw error;
+});
 
-        console.log('Server listening on ports: ' +
-            ports);
-    });
+server.start(error => {
+  if (error) throw error;
+  console.log(`Server running at: ${server.info.uri}.`);
 });
