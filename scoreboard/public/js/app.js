@@ -81,6 +81,7 @@ function Player(props) {
   return (
     <div className="player">
       <div className="player-name">
+        <a className="remove-player" onClick={props.onRemove}>X</a>
         {props.name}
       </div>
       <div className="player-score">
@@ -93,8 +94,42 @@ function Player(props) {
 Player.propTypes = {
   name: React.PropTypes.string.isRequired,
   score: React.PropTypes.number.isRequired,
-  onScoreChange: React.PropTypes.func.isRequired
+  onScoreChange: React.PropTypes.func.isRequired,
+  onRemove: React.PropTypes.func.isRequired
 };
+
+class AddPlayerForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: ""
+    }
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onNameChange = this.onNameChange.bind(this);
+  }
+  onSubmit(e) {
+    e.preventDefault();
+    this.props.onAdd(this.state.name);
+    this.setState({ name: "" })
+  }
+  onNameChange(e) {
+    this.setState({ name: e.target.value });
+  }
+  render() {
+    return (
+      <div className="add-player-form">
+        <form onSubmit={this.onSubmit}>
+          <input type="text" value={this.state.name} onChange={this.onNameChange}/>
+          <input type="submit" value="Add Player"/>
+        </form>
+      </div>
+    );
+  }
+}
+
+AddPlayerForm.propTypes = {
+  onAdd: React.PropTypes.func.isRequired
+}
 
 class Application extends React.Component {
   constructor(props) {
@@ -103,9 +138,22 @@ class Application extends React.Component {
       players: this.props.initialPlayers
     }
     this.onScoreChange = this.onScoreChange.bind(this);
+    this.onPlayerAdd = this.onPlayerAdd.bind(this);
   }
   onScoreChange(index, delta) {
     this.state.players[index].score += delta;
+    this.setState(this.state);
+  }
+  onPlayerAdd(name) {
+    this.state.players.push({
+      id: this.state.players.length + 1,
+      name: name,
+      score: 0
+    });
+    this.setState(this.state);
+  }
+  onRemovePlayer(index) {
+    this.state.players.splice(index, 1);
     this.setState(this.state);
   }
   render() {
@@ -121,11 +169,13 @@ class Application extends React.Component {
                   score={player.score}
                   key={player.id}
                   onScoreChange={(delta) => { this.onScoreChange(index, delta); }}
+                  onRemove={() => { this.onRemovePlayer(index); }}
                 />
               );
             })
           }
         </div>
+        <AddPlayerForm onAdd={this.onPlayerAdd}/>
       </div>
     );
   }
