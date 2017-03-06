@@ -22074,6 +22074,8 @@ function updateLink(linkElement, obj) {
 "use strict";
 
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _react = __webpack_require__(80);
 
 var _react2 = _interopRequireDefault(_react);
@@ -22088,10 +22090,79 @@ var _app2 = _interopRequireDefault(_app);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var PLAYERS = [{
+  id: 1,
+  name: "Chris Dyer",
+  score: 32
+}, {
+  id: 2,
+  name: "John Thomas",
+  score: 13
+}, {
+  id: 3,
+  name: "Tommy Pence",
+  score: 26
+}];
+
+function Stats(props) {
+  var totalPlayers = props.players.length;
+  var totalPoints = props.players.reduce(function (total, player) {
+    return total + player.score;
+  }, 0);
+
+  return _react2.default.createElement(
+    'table',
+    null,
+    _react2.default.createElement(
+      'tbody',
+      null,
+      _react2.default.createElement(
+        'tr',
+        null,
+        _react2.default.createElement(
+          'td',
+          null,
+          'Players:'
+        ),
+        _react2.default.createElement(
+          'td',
+          null,
+          totalPlayers
+        )
+      ),
+      _react2.default.createElement(
+        'tr',
+        null,
+        _react2.default.createElement(
+          'td',
+          null,
+          'Total Points:'
+        ),
+        _react2.default.createElement(
+          'td',
+          null,
+          totalPoints
+        )
+      )
+    )
+  );
+}
+
+Stats.propTypes = {
+  players: _react2.default.PropTypes.array.isRequired
+};
+
 function Header(props) {
   return _react2.default.createElement(
     'div',
     { className: 'header' },
+    _react2.default.createElement(Stats, { players: props.players }),
     _react2.default.createElement(
       'h1',
       null,
@@ -22101,7 +22172,8 @@ function Header(props) {
 }
 
 Header.propTypes = {
-  title: _react2.default.PropTypes.string.isRequired
+  title: _react2.default.PropTypes.string.isRequired,
+  players: _react2.default.PropTypes.array.isRequired
 };
 
 function Counter(props) {
@@ -22110,7 +22182,10 @@ function Counter(props) {
     { className: 'counter' },
     _react2.default.createElement(
       'button',
-      { className: 'counter-action decrement' },
+      { className: 'counter-action decrement',
+        onClick: function onClick() {
+          props.onChange(-1);
+        } },
       ' - '
     ),
     _react2.default.createElement(
@@ -22122,14 +22197,18 @@ function Counter(props) {
     ),
     _react2.default.createElement(
       'button',
-      { className: 'counter-action increment' },
+      { className: 'counter-action increment',
+        onClick: function onClick() {
+          props.onChange(1);
+        } },
       ' + '
     )
   );
 }
 
 Counter.propTypes = {
-  score: _react2.default.PropTypes.number.isRequired
+  score: _react2.default.PropTypes.number.isRequired,
+  onChange: _react2.default.PropTypes.func.isRequired
 };
 
 function Player(props) {
@@ -22144,39 +22223,82 @@ function Player(props) {
     _react2.default.createElement(
       'div',
       { className: 'player-score' },
-      _react2.default.createElement(Counter, { score: props.score })
+      _react2.default.createElement(Counter, { score: props.score, onChange: props.onScoreChange })
     )
   );
 }
 
 Player.propTypes = {
   name: _react2.default.PropTypes.string.isRequired,
-  score: _react2.default.PropTypes.number.isRequired
+  score: _react2.default.PropTypes.number.isRequired,
+  onScoreChange: _react2.default.PropTypes.func.isRequired
 };
 
-function Application(props) {
-  return _react2.default.createElement(
-    'div',
-    { className: 'scoreboard' },
-    _react2.default.createElement(Header, { title: props.title }),
-    _react2.default.createElement(
-      'div',
-      { className: 'players' },
-      _react2.default.createElement(Player, { name: 'Chris Dyer', score: 31 }),
-      _react2.default.createElement(Player, { name: 'John Thomas', score: 13 })
-    )
-  );
-}
+var Application = function (_React$Component) {
+  _inherits(Application, _React$Component);
+
+  function Application(props) {
+    _classCallCheck(this, Application);
+
+    var _this = _possibleConstructorReturn(this, (Application.__proto__ || Object.getPrototypeOf(Application)).call(this, props));
+
+    _this.state = {
+      players: _this.props.initialPlayers
+    };
+    _this.onScoreChange = _this.onScoreChange.bind(_this);
+    return _this;
+  }
+
+  _createClass(Application, [{
+    key: 'onScoreChange',
+    value: function onScoreChange(index, delta) {
+      this.state.players[index].score += delta;
+      this.setState(this.state);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      return _react2.default.createElement(
+        'div',
+        { className: 'scoreboard' },
+        _react2.default.createElement(Header, { title: this.props.title, players: this.state.players }),
+        _react2.default.createElement(
+          'div',
+          { className: 'players' },
+          this.state.players.map(function (player, index) {
+            return _react2.default.createElement(Player, {
+              name: player.name,
+              score: player.score,
+              key: player.id,
+              onScoreChange: function onScoreChange(delta) {
+                _this2.onScoreChange(index, delta);
+              }
+            });
+          })
+        )
+      );
+    }
+  }]);
+
+  return Application;
+}(_react2.default.Component);
 
 Application.propTypes = {
-  title: _react2.default.PropTypes.string
+  title: _react2.default.PropTypes.string,
+  initialPlayers: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.shape({
+    id: _react2.default.PropTypes.number.isRequired,
+    name: _react2.default.PropTypes.string.isRequired,
+    score: _react2.default.PropTypes.number.isRequired
+  })).isRequired
 };
 
 Application.defaultProps = {
   title: "Scoreboard"
 };
 
-_reactDom2.default.render(_react2.default.createElement(Application, null), document.getElementById('container'));
+_reactDom2.default.render(_react2.default.createElement(Application, { initialPlayers: PLAYERS }), document.getElementById('container'));
 
 /***/ })
 /******/ ]);
