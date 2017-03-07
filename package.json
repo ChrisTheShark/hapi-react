@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "start": "npm run build && node index.js",
-    "build": "./node_modules/.bin/webpack"
+    "build": "./node_modules/.bin/webpack",
+    "start-dev": "webpack-dev-server --content-base scoreboard/public/ --port 3000"
   },
   "dependencies": {
     "glue": "^4.1.0",
@@ -23,6 +24,7 @@
     "babel-preset-react": "^6.23.0",
     "css-loader": "^0.26.2",
     "style-loader": "^0.13.2",
-    "webpack": "^2.2.1"
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.1"
   }
 }
